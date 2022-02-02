@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <title>Təmsilçi borcları və Anbar qalıqları üzrə hesabat</title>
+    <div th:replace="fragments/header::meta-css-js" />
+    <style>
+        .clear-all
+        {
+            background-color: #f5a0aa;
+        }
+        .select-all
+        {
+            background-color: #a0f5a4;
+        }
+    </style>
+</head>
+<body>
+    <div th:fragment="report-header" class="container-fluid">
+        <div class="row">
+            <div>
+                <span class="m-2" role="button">
+                    <input type="radio" id="sbe" name="report-type"
+                           class="form-check-input"  role="button" checked>
+                    <label for="sbe" class="form-check-label"  role="button">Təmsilçi</label>
+                </span>
+
+                <span class="m-2" role="button">
+                    <input type="radio" id="whs" name="report-type"
+                           class="form-check-input"  role="button">
+                    <label for="whs" class="form-check-label"  role="button">Anbar</label>
+                </span>
+
+                <span sec:authorize="isAuthenticated()" class="float-end">
+                    <span>[[${#request.remoteUser}]] | </span>
+                    <a th:href="@{/logout}" class="link-danger icon-signout">Çıxış</a>
+                </span>
+
+                <div id="select-sbe" class="m-2">
+                    <button id="select-all-sbe" class="btn btn-light icon-ok select-all border-0"
+                            title="Hamısını seçin"></button>
+                    <button id="clear-sbe-selection" class="btn btn-light icon-remove clear-all border-0"
+                            title="Bütün seçimləri sil"></button>
+                    <label for="sbe-list">
+                        <select class="selectpicker form-control" id="sbe-list" required data-width = "50vw"
+                                name="sbe-list[]" multiple data-live-search="true" title="Təmsilçi seçin"
+                                data-selected-text-format="count" data-count-selected-text="Seçilib: {0}">
+                            <option th:each="item:${sbe_list}" th:value="${item.sbeCode}" th:text="${item}"></option>
+                        </select>
+                    </label>
+                </div>
+
+                <div id="select-whs" class="m-2" hidden>
+                    <button id="select-all-whs" class="btn btn-light icon-ok select-all border-0"
+                            title="Hamısını seçin"></button>
+                    <button id="clear-whs-selection" class="btn btn-light icon-remove clear-all border-0"
+                            title="Bütün seçimləri sil"></button>
+                    <label for="whs-list">
+                        <select class="selectpicker form-control" id="whs-list" required data-width = "50vw"
+                                name="whs-list[]" multiple data-live-search="true" title="Anbar seçin"
+                                data-selected-text-format="count" data-count-selected-text="Seçilib: {0}">
+                            <option th:each="item:${whs_list}" th:value="${item.whsCode}" th:text="${item}"></option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <div>
+                    <div>
+                        <div class="input-append d-inline">
+                            <label for="start-date"></label>
+                            <input class="span2" id="start-date" size="8" type="text"  name="start-date" />
+                            <span class="add-on"><i class="icon-calendar"></i></span>
+                        </div>
+                        <span> - </span>
+                        <div class="input-append d-inline">
+                            <label for="end-date"></label>
+                            <input class="span2" id="end-date" size="8" type="text" name="end-date" />
+                            <span class="add-on"><i class="icon-calendar"></i></span>
+                        </div>
+                    </div>
+                    <div class="m-2">
+                        <button id="submit" class="btn btn-primary">OK</button>
+                        <button id="cancel" class="btn btn-danger" disabled>Ləğv et</button>
+                    </div>
+                </div>
+                <progress style="width: 100%" id="report-progress" hidden></progress>
+                <div id="result"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    let dateFormat = 'yy-mm-dd';
+
+    $(function () {
+        $('#start-date').datepicker({
+            dateFormat: dateFormat,
+            changeMonth: true,
+            changeYear: true
+        }).val();
+
+        $('#end-date').datepicker({
+            dateFormat: dateFormat,
+            changeMonth: true,
+            changeYear: true
+        }).val()
+    });
+
+    let today = new Date();
+    let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    $(function () {
+        $('#start-date').val($.datepicker.formatDate(dateFormat, firstDayOfMonth, null));
+        $('#end-date').val($.datepicker.formatDate(dateFormat, new Date(), null));
+
+        $('#show').click(function (e) {
+            e.preventDefault()
+            alert($('#start-date').val())
+        })
+    })
+
+    let url ='sbe-report';
+
+    $('#sbe').click(function (e){
+        $('#select-sbe').attr('hidden', false)
+        $('#select-whs').attr('hidden', true)
+        $(this).blur()
+        url = 'sbe-report';
+    })
+    $('#whs').click(function (e){
+        $('#select-sbe').attr('hidden', true)
+        $('#select-whs').attr('hidden', false)
+        $(this).blur()
+        url = 'stock-report';
+    })
+
+    $('#select-all-sbe').click(function (e){
+        $('#sbe-list').selectpicker('selectAll')
+        $(this).blur()
+    })
+
+    $('#select-all-whs').click(function (e){
+        $('#whs-list').selectpicker('selectAll')
+        $(this).blur()
+    })
+
+    $('#clear-sbe-selection').click(function (e){
+        $('#sbe-list').selectpicker('deselectAll')
+        $(this).blur()
+    })
+
+    $('#clear-whs-selection').click(function (e){
+        $('#whs-list').selectpicker('deselectAll')
+        $(this).blur()
+    })
+
+    $('#submit').click(function (e){
+        e.preventDefault();
+
+        if (url === 'sbe-report' && $('#sbe-list').val().length === 0)
+        {
+            alert('Ən az bir təmsilçi seçməlisiniz!');
+            exit();
+        }
+        if (url === 'stock-report' && $('#whs-list').val().length === 0)
+        {
+            alert('Ən az bir anbar seçməlisiniz!');
+            exit();
+        }
+
+
+        $(this).attr('disabled', true);
+        $('#cancel').attr('disabled', false);
+        $('#result').removeClass('alert alert-danger').html("");
+        $('#report-progress').attr('hidden', false);
+        getAjaxData();
+    })
+
+    $('#cancel').click(function (e){
+        e.preventDefault();
+        $('#result').html("");
+        $('#report-progress').attr('hidden', true)
+        $('#submit').attr('disabled', false);
+        $(this).attr('disabled', true);
+        jqXHR.abort();
+    })
+
+    let request = function() {
+        let startDate = $('#start-date').val();
+        let endDate = $('#end-date').val();
+        let data = '';
+        if (url === 'sbe-report')
+            data = 'start-date=' + startDate + '&end-date=' + endDate + '&sbe-list=' + $('#sbe-list').val();
+
+        else if (url === 'stock-report')
+            data = 'start-date=' + startDate + '&end-date=' + endDate + '&whs-list=' + $('#whs-list').val();
+
+        jqXHR = $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            url: url,
+            data: data,
+            success: function (data) {
+                console.log('SUCCESS: ', data);
+                displaySuccess(data);
+            },
+            error: function (e) {
+                console.log('ERROR: ', e);
+                displayError(e);
+            }
+        })
+    }
+
+
+    function getAjaxData()
+    {
+        request();
+    }
+
+    function displaySuccess(data){
+        $('#report-progress').attr('hidden', true)
+        $('#submit').attr('disabled', false);
+        $('#cancel').attr('disabled', true);
+        $('#result').html(data);
+    }
+
+    function displayError(e){
+        $('#result').addClass('alert alert-danger').html(e.statusText);
+        $('#report-progress').attr('hidden', true)
+        $('#submit').attr('disabled', false);
+        $('#cancel').attr('disabled', true);
+    }
+
+    $('.selectpicker').select(function (d) {
+
+    })
+</script>
+</html>

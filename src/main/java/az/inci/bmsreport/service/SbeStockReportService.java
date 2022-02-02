@@ -1,0 +1,54 @@
+package az.inci.bmsreport.service;
+
+import az.inci.bmsreport.model.SbeStockReportData;
+import az.inci.bmsreport.model.SbeStockReportDataItem;
+import org.springframework.stereotype.Service;
+import org.thymeleaf.expression.Numbers;
+
+import javax.persistence.Query;
+import java.util.List;
+import java.util.Locale;
+
+@Service
+public class SbeStockReportService extends AbstractService {
+
+    public SbeStockReportData getReport(String startDate, String endDate, List<String> sbeList)
+    {
+        SbeStockReportData reportData = new SbeStockReportData();
+        reportData.setStartDate(startDate);
+        reportData.setEndDate(endDate);
+
+        Query query = entityManager.createNativeQuery("EXEC DBO.SP_WEB_SBE_STOCK_REPORT ?, ?, ?");
+        query.setParameter(1, startDate);
+        query.setParameter(2, endDate);
+
+        if (sbeList != null)
+        {
+            StringBuilder sbeListString= new StringBuilder();
+            for (String s : sbeList)
+                sbeListString.append(s).append(",");
+
+            query.setParameter(3, sbeListString.toString().trim());
+        }
+        else
+            query.setParameter(3, null);
+
+        List<Object[]> resultList = query.getResultList();
+
+        for (Object[] result : resultList)
+        {
+            SbeStockReportDataItem dataItem = new SbeStockReportDataItem();
+            dataItem.setParentSbeCode(String.valueOf(result[0]));
+            dataItem.setSbeCode(String.valueOf(result[1]));
+            dataItem.setSbeName(String.valueOf(result[2]));
+            dataItem.setWhsCode(String.valueOf(result[3]));
+            dataItem.setFirstBpBalance(Double.parseDouble(String.valueOf(result[4])));
+            dataItem.setLastBpBalance(Double.parseDouble(String.valueOf(result[5])));
+            dataItem.setFirstStock(Double.parseDouble(String.valueOf(result[6])));
+            dataItem.setLastStock(Double.parseDouble(String.valueOf(result[7])));
+            reportData.adItem(dataItem);
+        }
+
+        return reportData;
+    }
+}
