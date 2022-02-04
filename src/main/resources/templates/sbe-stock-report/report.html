@@ -2,18 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <title>Təmsilçi borcları və Anbar qalıqları üzrə hesabat</title>
-    <div th:replace="fragments/header::meta-css-js" />
-    <style>
-        .clear-all
-        {
-            background-color: #f5a0aa;
-        }
-        .select-all
-        {
-            background-color: #a0f5a4;
-        }
-    </style>
 </head>
+<div th:replace="fragments/header::meta-css-js"></div>
 <body>
     <div th:fragment="report-header" class="container-fluid">
         <div class="row">
@@ -36,12 +26,8 @@
                 </span>
 
                 <div id="select-sbe" class="m-2">
-                    <button id="select-all-sbe" class="btn btn-light icon-ok select-all border-0"
-                            title="Hamısını seçin"></button>
-                    <button id="clear-sbe-selection" class="btn btn-light icon-remove clear-all border-0"
-                            title="Bütün seçimləri sil"></button>
                     <label for="sbe-list">
-                        <select class="selectpicker form-control" id="sbe-list" required data-width = "50vw"
+                        <select class="selectpicker form-control" id="sbe-list" required
                                 name="sbe-list[]" multiple data-live-search="true" title="Təmsilçi seçin"
                                 data-selected-text-format="count" data-count-selected-text="Seçilib: {0}">
                             <option th:each="item:${sbe_list}" th:value="${item.sbeCode}" th:text="${item}"></option>
@@ -50,12 +36,8 @@
                 </div>
 
                 <div id="select-whs" class="m-2" hidden>
-                    <button id="select-all-whs" class="btn btn-light icon-ok select-all border-0"
-                            title="Hamısını seçin"></button>
-                    <button id="clear-whs-selection" class="btn btn-light icon-remove clear-all border-0"
-                            title="Bütün seçimləri sil"></button>
                     <label for="whs-list">
-                        <select class="selectpicker form-control" id="whs-list" required data-width = "50vw"
+                        <select class="selectpicker form-control" id="whs-list" required
                                 name="whs-list[]" multiple data-live-search="true" title="Anbar seçin"
                                 data-selected-text-format="count" data-count-selected-text="Seçilib: {0}">
                             <option th:each="item:${whs_list}" th:value="${item.whsCode}" th:text="${item}"></option>
@@ -92,6 +74,8 @@
 </body>
 <script type="text/javascript">
     let dateFormat = 'yy-mm-dd';
+    let submit = $('#submit');
+    let cancel = $('#cancel');
 
     $(function () {
         $('#start-date').datepicker({
@@ -122,40 +106,20 @@
 
     let url ='sbe-report';
 
-    $('#sbe').click(function (e){
+    $('#sbe').click(function (){
         $('#select-sbe').attr('hidden', false)
         $('#select-whs').attr('hidden', true)
         $(this).blur()
         url = 'sbe-report';
     })
-    $('#whs').click(function (e){
+    $('#whs').click(function (){
         $('#select-sbe').attr('hidden', true)
         $('#select-whs').attr('hidden', false)
         $(this).blur()
         url = 'stock-report';
     })
 
-    $('#select-all-sbe').click(function (e){
-        $('#sbe-list').selectpicker('selectAll')
-        $(this).blur()
-    })
-
-    $('#select-all-whs').click(function (e){
-        $('#whs-list').selectpicker('selectAll')
-        $(this).blur()
-    })
-
-    $('#clear-sbe-selection').click(function (e){
-        $('#sbe-list').selectpicker('deselectAll')
-        $(this).blur()
-    })
-
-    $('#clear-whs-selection').click(function (e){
-        $('#whs-list').selectpicker('deselectAll')
-        $(this).blur()
-    })
-
-    $('#submit').click(function (e){
+    submit.click(function (e){
         e.preventDefault();
 
         if (url === 'sbe-report' && $('#sbe-list').val().length === 0)
@@ -171,13 +135,13 @@
 
 
         $(this).attr('disabled', true);
-        $('#cancel').attr('disabled', false);
+        cancel.attr('disabled', false);
         $('#result').removeClass('alert alert-danger').html("");
         $('#report-progress').attr('hidden', false);
         getAjaxData();
     })
 
-    $('#cancel').click(function (e){
+    cancel.click(function (e){
         e.preventDefault();
         $('#result').html("");
         $('#report-progress').attr('hidden', true)
@@ -219,21 +183,28 @@
     }
 
     function displaySuccess(data){
-        $('#report-progress').attr('hidden', true)
-        $('#submit').attr('disabled', false);
-        $('#cancel').attr('disabled', true);
         $('#result').html(data);
+        $('#report-progress').attr('hidden', true)
+        submit.attr('disabled', false);
+        cancel.attr('disabled', true);
     }
 
     function displayError(e){
         $('#result').addClass('alert alert-danger').html(e.statusText);
         $('#report-progress').attr('hidden', true)
-        $('#submit').attr('disabled', false);
-        $('#cancel').attr('disabled', true);
+        submit.attr('disabled', false);
+        cancel.attr('disabled', true);
     }
 
-    $('.selectpicker').select(function (d) {
-
+    $('.selectpicker').selectpicker({
+        liveSearchPlaceholder : 'Axtar',
+        sanitize: true,
+        actionsBox: true,
+        selectAllText: 'Hamısını seç',
+        deselectAllText: 'Seçimi sil',
+        width: '50vw',
+        liveSearchNormalize: true,
+        noneResultsText: 'Tapılmadı: {0}'
     })
 </script>
 </html>
