@@ -1,6 +1,7 @@
 package az.inci.bmsreport.model;
 
 public class User {
+    private String token;
     private String userId;
     private String password;
     private String userName;
@@ -36,5 +37,13 @@ public class User {
 
     public void setAdmin(boolean admin) {
         isAdmin = admin;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

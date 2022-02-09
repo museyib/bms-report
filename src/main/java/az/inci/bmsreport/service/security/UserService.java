@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 public class UserService extends AbstractService {
+
     public User getById(String userId)
     {
         User user = new User();
@@ -22,7 +23,7 @@ public class UserService extends AbstractService {
             user.setUserId(String.valueOf(resultList.get(0)[0]));
             user.setPassword(String.valueOf(resultList.get(0)[1]));
             user.setUserName(String.valueOf(resultList.get(0)[2]));
-            user.setAdmin(String.valueOf(resultList.get(0)[3]).equals("1"));
+            user.setAdmin(Boolean.parseBoolean(String.valueOf(resultList.get(0)[3])));
         }
 
         return user;

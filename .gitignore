@@ -21,8 +21,6 @@ src/main/resources/application.properties
 *.ipr
 *.yml
 
-/src/main/resources/application.yml
-/src/main/resources/application-dev.yml
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
