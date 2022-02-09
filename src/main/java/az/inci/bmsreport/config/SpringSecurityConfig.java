@@ -1,5 +1,6 @@
 package az.inci.bmsreport.config;
 
+import az.inci.bmsreport.error.ReportAccessDeniedHandler;
 import az.inci.bmsreport.service.security.BMSUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,18 +9,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
 
 @EnableWebSecurity
 @Configuration
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private AccessDeniedHandler accessDeniedHandler;
+    private ReportAccessDeniedHandler accessDeniedHandler;
 
     private BMSUserDetailsService userDetailsService;
 
     @Autowired
-    public void setAccessDeniedHandler(AccessDeniedHandler accessDeniedHandler) {
+    public void setAccessDeniedHandler(ReportAccessDeniedHandler accessDeniedHandler) {
         this.accessDeniedHandler = accessDeniedHandler;
     }
 
@@ -30,13 +30,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .requiresChannel().anyRequest().requiresSecure()
+        http.requiresChannel().anyRequest().requiresSecure()
                 .and()
                 .userDetailsService(userDetailsService)
                 .authorizeRequests()
-                    .antMatchers("/login").permitAll()
-                    .antMatchers("/report").hasAnyRole("ADMIN")
+                    .antMatchers("/login", "/logout", "/403").permitAll()
+                    .antMatchers("/admin/**").hasAuthority("ADMIN")
                     .anyRequest()
                     .authenticated()
                 .and()

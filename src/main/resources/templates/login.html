@@ -10,7 +10,7 @@
         <form th:action="@{/login}" method="post">
             <div th:if="${param.error}">
                 <div class="alert alert-danger">
-                    Yanlış şifrə.
+                    İstifadəçi ID-si və ya şifrə yanlışdır.
                 </div>
             </div>
             <div th:if="${param.logout}">

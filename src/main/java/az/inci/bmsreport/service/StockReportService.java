@@ -16,6 +16,9 @@ public class StockReportService extends AbstractService {
         reportData.setStartDate(startDate);
         reportData.setEndDate(endDate);
 
+        double firstStock = 0;
+        double lastStock = 0;
+
         Query query = entityManager.createNativeQuery("EXEC DBO.SP_WEB_STOCK_REPORT ?, ?, ?");
         query.setParameter(1, startDate);
         query.setParameter(2, endDate);
@@ -41,7 +44,13 @@ public class StockReportService extends AbstractService {
             dataItem.setFirstStock(Double.parseDouble(String.valueOf(result[2])));
             dataItem.setLastStock(Double.parseDouble(String.valueOf(result[3])));
             reportData.adItem(dataItem);
+
+            firstStock += dataItem.getFirstStock();
+            lastStock += dataItem.getLastStock();
         }
+
+        reportData.setFirstStock(firstStock);
+        reportData.setLastStock(lastStock);
 
         return reportData;
     }

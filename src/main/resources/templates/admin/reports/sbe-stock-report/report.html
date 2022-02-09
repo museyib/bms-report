@@ -20,10 +20,7 @@
                     <label for="whs" class="form-check-label"  role="button">Anbar</label>
                 </span>
 
-                <span sec:authorize="isAuthenticated()" class="float-end">
-                    <span>[[${#request.remoteUser}]] | </span>
-                    <a th:href="@{/logout}" class="link-danger icon-signout">Çıxış</a>
-                </span>
+                <span th:replace="fragments/header::auth-nav"></span>
 
                 <div id="select-sbe" class="m-2">
                     <label for="sbe-list">

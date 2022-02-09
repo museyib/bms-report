@@ -11,4 +11,10 @@ public class LoginController {
     {
         return "login";
     }
+
+    @RequestMapping("403")
+    public String error()
+    {
+        return "error/403";
+    }
 }

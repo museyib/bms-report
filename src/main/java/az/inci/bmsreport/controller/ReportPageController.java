@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("sbe-stock-report")
+@RequestMapping("/admin/reports/sbe-stock-report")
 public class ReportPageController {
     private SbeService sbeService;
     private WhsService whsService;
@@ -29,6 +29,6 @@ public class ReportPageController {
         model.addAttribute("sbe_list", sbeService.getSbeList());
         model.addAttribute("whs_list", whsService.getWhsList());
 
-        return "sbe-stock-report/report";
+        return "admin/reports/sbe-stock-report/report";
     }
 }

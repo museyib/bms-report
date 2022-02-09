@@ -6,7 +6,8 @@
 <div th:replace="fragments/header::meta-css-js"></div>
 <body>
 <div class="container-xxl">
-    <a class="btn btn-outline-primary btn-lg" role="button" th:href="@{/sbe-stock-report/report}">Təmsilçilər və anbar üzrə hesabat</a>
+    <span th:replace="fragments/header::auth-nav"></span>
+    <a class="btn btn-outline-primary btn-lg" role="button" th:href="@{/admin/reports/sbe-stock-report/report}">Təmsilçilər və anbar üzrə hesabat</a>
 </div>
 </body>
 </html>

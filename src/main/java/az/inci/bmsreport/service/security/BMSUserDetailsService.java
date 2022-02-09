@@ -3,6 +3,7 @@ package az.inci.bmsreport.service.security;
 import az.inci.bmsreport.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,7 +30,7 @@ public class BMSUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         if (user.isAdmin())
-            authorities.add((GrantedAuthority) () -> "ADMIN");
+            authorities.add((new SimpleGrantedAuthority("ADMIN")));
 
         return new org.springframework.security.core.userdetails
                 .User(user.getUserId(), user.getPassword(), authorities);

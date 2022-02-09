@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 @Controller
-@RequestMapping("/sbe-stock-report")
+@RequestMapping("admin/reports/sbe-stock-report")
 public class SbeStockReportController {
     private SbeStockReportService reportService;
 
@@ -33,6 +33,6 @@ public class SbeStockReportController {
             report = new SbeStockReportData();
         model.addAttribute("report_data", report);
 
-        return "sbe-stock-report/sbe-report";
+        return "admin/reports/sbe-stock-report/sbe-report";
     }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <div th:fragment="meta-css-js">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,6 +14,14 @@
     <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
 </div>
 <body>
-
+<div th:fragment="auth-nav" sec:authorize="isAuthenticated()" class="float-end">
+    <a th:href="@{/}" class="link-info icon-home">Əsas səhifə</a>
+    <span> | [[${#request.remoteUser}]] | </span>
+    <form class="d-inline" th:action="@{/logout}" method="post">
+        <button type="submit" class="btn">
+            <i class="link-danger icon-signout">Çıxış</i>
+        </button>
+    </form>
+</div>
 </body>
 </html>

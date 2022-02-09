@@ -31,6 +31,6 @@ public class ReportAccessDeniedHandler implements AccessDeniedHandler {
             + request.getRequestURI());
         }
 
-        response.sendRedirect(request.getContextPath() + "403");
+        response.sendRedirect("/403");
     }
 }
