@@ -13,8 +13,8 @@
                         <tr th:each="item:${report_data.dataItemList}">
                             <td th:utext="${item.whsCode}"></td>
                             <td th:utext="${item.whsName}"></td>
-                            <th th:utext="${#numbers.formatDecimal(report_data.firstStock, 1, 4)}" class="text-end"></th>
-                            <th th:utext="${#numbers.formatDecimal(report_data.lastStock, 1, 4)}" class="text-end"></th>
+                            <th th:utext="${#numbers.formatDecimal(item.firstStock, 1, 4)}" class="text-end"></th>
+                            <th th:utext="${#numbers.formatDecimal(item.lastStock, 1, 4)}" class="text-end"></th>
                         </tr>
                         </tbody>
                         <tfoot>
