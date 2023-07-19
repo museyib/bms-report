@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<table class="table table-sm table-hover table-striped table-bordered table-responsive-sm">
+    <thead>
+    <tr>
+        <th>Tabe olduğu təmsilçi</th>
+        <th>Təmsilçi kodu</th>
+        <th>Təmsilçi adı</th>
+        <th>Anbar kodu</th>
+        <th class="text-end">İlk borc qalığı</th>
+        <th class="text-end">Son borc qalığı</th>
+        <th class="text-end">İlk anbar qalığı</th>
+        <th class="text-end">Son anbar qalığı</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item:${report_data.dataItemList}">
+        <td th:utext="${item.parentSbeCode}"></td>
+        <td th:utext="${item.sbeCode}"></td>
+        <td th:utext="${item.sbeName}"></td>
+        <td th:utext="${item.whsCode}"></td>
+        <td class="text-end" th:utext="${#numbers.formatDecimal(item.firstBpBalance, 1, 4)}"></td>
+        <td class="text-end" th:utext="${#numbers.formatDecimal(item.lastBpBalance, 1, 4)}"></td>
+        <td class="text-end" th:utext="${#numbers.formatDecimal(item.firstStock, 1, 4)}"></td>
+        <td class="text-end" th:utext="${#numbers.formatDecimal(item.lastStock, 1, 4)}"></td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th class="text-end" colspan="4">Cəmi:</th>
+        <th class="text-end" th:utext="${#numbers.formatDecimal(report_data.firstBpBalance, 1, 4)}"></th>
+        <th class="text-end" th:utext="${#numbers.formatDecimal(report_data.lastBpBalance, 1, 4)}"></th>
+        <th class="text-end" th:utext="${#numbers.formatDecimal(report_data.firstStock, 1, 4)}"></th>
+        <th class="text-end" th:utext="${#numbers.formatDecimal(report_data.lastStock, 1, 4)}"></th>
+    </tr>
+    </tfoot>
+</table>
+</html>

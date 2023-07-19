@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Qadağan olunmuş zona</title>
+</head>
+<div th:replace="fragments/header::meta-css-js"></div>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="alert alert-danger float-start">
+            <span th:replace="fragments/header::auth-nav"></span>
+            Bu bölmə üçün giriş icazəniz yoxdur.
+        </div>
+    </div>
+</div>
+</body>
+</html>

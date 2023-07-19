@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<table class="table table-sm table-hover table-striped table-bordered table-responsive-sm">
+    <thead>
+    <tr>
+        <th>Anbar kodu</th>
+        <th>Anbar adı</th>
+        <th class="text-end">İlk anbar qalığı</th>
+        <th class="text-end">Son anbar qalığı</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item:${report_data.dataItemList}">
+        <td th:utext="${item.whsCode}"></td>
+        <td th:utext="${item.whsName}"></td>
+        <th class="text-end" th:utext="${#numbers.formatDecimal(item.firstStock, 1, 4)}"></th>
+        <th class="text-end" th:utext="${#numbers.formatDecimal(item.lastStock, 1, 4)}"></th>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th class="text-end" colspan="2">Cəmi:</th>
+        <th class="text-end" th:utext="${#numbers.formatDecimal(report_data.firstStock, 1, 4)}"></th>
+        <th class="text-end" th:utext="${#numbers.formatDecimal(report_data.lastStock, 1, 4)}"></th>
+    </tr>
+    </tfoot>
+</table>
+</html>

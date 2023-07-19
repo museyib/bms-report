@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+</head>
+<div th:replace="~{fragments/header::meta-css-js}"></div>
+<body>
+<div class="container" style="width: 50vw; max-width: 300px">
+    <div class="row">
+        <form id="form" method="post" th:action="@{/login}">
+            <div th:if="${param.error}">
+                <div class="alert alert-danger">
+                    İstifadəçi ID-si və ya şifrə yanlışdır.
+                </div>
+            </div>
+            <div th:if="${param.logout}">
+                <div class="alert alert-info">
+                    Çıxış olundu.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="username"></label>
+                <input autofocus class="form-control" id="username" name="username"
+                       placeholder="İstifadəçi ID-si" required type="text"/>
+            </div>
+            <div class="form-group">
+                <label for="password"></label>
+                <input class="form-control" id="password" name="password" placeholder="Şifrə"
+                       required type="password"/>
+            </div>
+
+            <div class="form-group text-center m-2">
+                <input id="login" class="btn btn-lg btn-primary btn-block" type="submit" value="Daxil ol"/>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    $('#form').submit(function (){
+        $('#login').prop('disabled', true);
+    });
+</script>
+</html>

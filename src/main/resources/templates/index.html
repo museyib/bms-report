@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hesabatlar</title>
+</head>
+<div th:replace="~{fragments/header::meta-css-js}"></div>
+<body>
+<div class="container-xxl">
+    <span th:replace="~{fragments/header::auth-nav}"></span>
+    <a class="btn btn-outline-primary btn-lg" role="button"
+       th:href="@{/reports/sbe-stock-report/report}">Təmsilçi qalığı üzrə hesabat</a>
+    <a class="btn btn-outline-primary btn-lg" role="button"
+       th:href="@{/reports/comparative/report}">Müqayisəli artım faizi</a>
+</div>
+</body>
+</html>

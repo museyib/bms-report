@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang='en' xmlns:th='http://www.thymeleaf.org'>
+<head>
+  <th:block th:replace="~{fragments/header::meta-css-js}"></th:block>
+  <link th:href="@{/css/styles.css}" rel="stylesheet" type="text/css" />
+  <title>Müqayisəli artım faizi</title>
+</head>
+<body onload='getAjaxData()'>
+<div class='fixed-top bg-opacity-100 bg-white'>
+  <label for='month'>
+    <select class='select-picker form-control' id='month'
+            name='month' required title='Ay seçin'
+            onchange='monthChanged()'>
+      <option th:each='month:${months}'
+              th:text='${month.name}'
+              th:value='${month.id}'
+              th:selected='${month.id == 0}'></option>
+    </select>
+  </label>
+  <span id='prev-result' onclick='reloadPrevResult()' class='icon-arrow-left m-3 pointer d-none'></span>
+  <progress hidden id='report-progress' style='width: 100%'></progress>
+</div>
+<div id='result' class='result'></div>
+<script th:src="@{/js/comparative/scripts.js}" type="text/javascript"></script>
+</body>
+</html>

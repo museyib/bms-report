@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragments/header::meta-css-js}"></th:block>
+    <link th:href="@{/css/styles.css}" rel="stylesheet" type="text/css" />
+    <title>Təmsilçi qalığı üzrə hesabat</title>
+</head>
+<body>
+<div class="container-fluid" th:fragment="report-header">
+    <div class="row">
+        <div>
+                <span class="m-2" role="button" th:hidden="${!isAdmin}">
+                    <input checked class="form-check-input" id="sbe"
+                           name="report-type" role="button" type="radio">
+                    <label class="form-check-label" for="sbe">Təmsilçi</label>
+                </span>
+
+            <span class="m-2" role="button" th:hidden="${!isAdmin}">
+                    <input class="form-check-input" id="whs" name="report-type"
+                           role="button" type="radio">
+                    <label class="form-check-label" for="whs">Anbar</label>
+                </span>
+
+            <span th:replace="~{fragments/header::auth-nav}"></span>
+
+            <div class="m-2" id="select-sbe">
+                <label for="sbe-list">
+                    <select class="select-picker form-control" data-count-selected-text="Seçilib: {0}" data-live-search="true"
+                            data-selected-text-format="count" id="sbe-list" multiple name="sbe-list[]"
+                            required title="Təmsilçi seçin">
+                        <option th:each="item:${sbe_list}" th:text="${item}" th:value="${item.sbeCode}"></option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="m-2" hidden id="select-whs">
+                <label for="whs-list">
+                    <select class="select-picker form-control" data-count-selected-text="Seçilib: {0}" data-live-search="true"
+                            data-selected-text-format="count" id="whs-list" multiple name="whs-list[]"
+                            required title="Anbar seçin">
+                        <option th:each="item:${whs_list}" th:text="${item}" th:value="${item.whsCode}"></option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="m-2" id="select-price">
+                <label for="price-list">
+                    <select class="select-picker form-control" data-live-search="true" id="price-list"
+                            name="price-code" required title="Qiymət seçin (Anbar dəyəri üçün)">
+                        <option th:each="item:${price_list}"
+                                th:selected="${true}"
+                                th:text="${item}"
+                                th:value="${item.priceCode}"></option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <div>
+                    <div class="input-append d-inline">
+                        <label for="start-date"></label>
+                        <input class="span2" id="start-date" name="start-date" size="8" type="text"/>
+                        <span class="add-on"><i class="icon-calendar"></i></span>
+                    </div>
+                    <span> - </span>
+                    <div class="input-append d-inline">
+                        <label for="end-date"></label>
+                        <input class="span2" id="end-date" name="end-date" size="8" type="text"/>
+                        <span class="add-on"><i class="icon-calendar"></i></span>
+                    </div>
+                </div>
+                <div class="m-2">
+                    <button class="btn btn-primary" id="submit">OK</button>
+                    <button class="btn btn-danger" disabled id="cancel">Ləğv et</button>
+                </div>
+            </div>
+            <progress hidden id="report-progress" style="width: 100%"></progress>
+            <div id="result"></div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/js/sbe-balance/scripts.js}" type="text/javascript"></script>
+</html>
