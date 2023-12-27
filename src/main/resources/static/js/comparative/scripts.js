@@ -114,8 +114,6 @@ function getAjaxData() {
             url = 'report-for-sub-bm-sbe';
         } else if (isSuperVisor) {
             url = 'report-for-sub-bm';
-        } else {
-            url = 'report-for-sub-sbe';
         }
     }
 

@@ -2,6 +2,7 @@ package az.inci.bmsreport;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -10,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @SpringBootApplication
 @Controller
+@EnableScheduling
 public class BmsReportApplication
 {
-
     public static void main(String[] args)
     {
         SpringApplication.run(BmsReportApplication.class, args);

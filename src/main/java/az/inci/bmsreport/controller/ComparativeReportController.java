@@ -47,22 +47,6 @@ public class ComparativeReportController
         return "reports/comparative/report-for-bm";
     }
 
-    @GetMapping("/report-for-sub-sbe")
-    public String getReportForSubSbe(Model model)
-    {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails)
-            username = ((UserDetails) principal).getUsername();
-        else
-            username = principal.toString();
-
-        List<ComparativeReportData> reportDataList = reportService.sbeReport(username);
-        model.addAttribute("report_data", reportDataList);
-        model.addAttribute("months", monthService.months());
-        return "reports/comparative/report-for-sub-sbe";
-    }
-
     @GetMapping("/report-for-sub-bm")
     public String getReportForSubBm(Model model,
                                     @RequestParam("sbe-code") String sbeCode,
