@@ -17,7 +17,8 @@
               th:selected='${month.id == 0}'></option>
     </select>
   </label>
-  <span id='prev-result' onclick='reloadPrevResult()' class='icon-arrow-left m-3 pointer d-none'></span>
+  <span id='prev-result' onclick='reloadPrevResult()' class='icon-arrow-left m-3 pointer' hidden></span>
+  <span id='play' onclick='startPlay()' class='icon-play m-3 pointer' hidden></span>
   <progress hidden id='report-progress' style='width: 100%'></progress>
 </div>
 <div id='result' class='result'></div>

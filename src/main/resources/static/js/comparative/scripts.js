@@ -2,6 +2,10 @@ let resultField = $('#result');
 let progress = $('#report-progress');
 let month = $('#month');
 let prevResult = $('#prev-result');
+let playPages = $('#play');
+
+let isPlaying = false;
+let firsLoad = true;
 
 let sbeCode;
 let isSuperVisor;
@@ -15,7 +19,7 @@ let reportPageStack = [];
 
 let jqXHR;
 
-function newReport(element)
+function nextReport(element)
 {
     let tmp = element.getAttribute('value');
 
@@ -32,6 +36,7 @@ function newReport(element)
             sbeCode: sbeCode
         })
 
+        firsLoad = false;
         getAjaxData();
     }
 }
@@ -107,7 +112,7 @@ function getAjaxData() {
     resetObjects();
 
     if (sbeCode && sbeCode.startsWith('SM')) {
-        prevResult.removeClass('d-none');
+        prevResult.attr('hidden', false);
         data = 'sbe-code=' + sbeCode;
 
         if (isAdmin || sbeCode.startsWith('SM')) {
@@ -145,6 +150,14 @@ let ajaxRequest = function () {
 function displaySuccess(data) {
     resultField.html(data);
     progress.attr('hidden', true)
+
+    if (firsLoad) {
+        let dataTable = $('#data-table');
+        isSuperVisor = dataTable.attr('isSuperVisor') === 'true';
+        isAdmin = dataTable.attr('isAdmin') === 'true';
+        let hidePlayButton = !(isAdmin || isSuperVisor);
+        playPages.attr('hidden', hidePlayButton);
+    }
 }
 
 function displayError(jqXHR) {
@@ -157,6 +170,9 @@ function reloadPrevResult()
 {
     if (jqXHR)
         jqXHR.abort();
+    isPlaying = false;
+    playPages.addClass('icon-play');
+    playPages.removeClass('icon-stop');
 
     reportPage = reportPageStack.pop();
 
@@ -166,9 +182,22 @@ function reloadPrevResult()
     sbeCode = reportPage.sbeCode;
 
     if (reportPageStack.length === 0)
-        prevResult.addClass('d-none');
+        prevResult.attr('hidden', true);
 
     reselectMonth();
+}
+
+function reloadFirstResult()
+{
+    reportPage = reportPageStack[0];
+    reportPageStack = [];
+
+    resultField.removeClass('alert alert-danger').html(reportPage.content);
+    url = reportPage.url;
+    monthId = reportPage.monthId;
+    sbeCode = reportPage.sbeCode;
+
+    prevResult.attr('hidden', true);
 }
 
 function reselectMonth()
@@ -177,4 +206,35 @@ function reselectMonth()
     $('#month option[value='+monthId+']').attr('selected', true);
     month.val(monthId);
     month.selectpicker('refresh');
+}
+
+
+function delay(time) {
+    return new Promise(resolve => {setTimeout(resolve, time)});
+}
+
+async function startPlay() {
+    isPlaying = !isPlaying;
+    playPages.toggleClass('icon-play');
+    playPages.toggleClass('icon-stop');
+    if (isPlaying) {
+        while (isPlaying) {
+            let rowElements = $('#data-table').find('.table-row');
+            if (rowElements && rowElements.length > 0) {
+                if (!rowElements[0].getAttribute('value').startsWith('SM'))
+                {
+                    reloadFirstResult()
+                }
+                else
+                {
+                    let randomIndex = Math.floor(Math.random() * rowElements.length);
+                    let nextElement = rowElements[randomIndex];
+                    nextElement.animate({backgroundColor: 'lightblue'}, 600)
+                    await delay(700)
+                    nextReport(nextElement);
+                }
+            }
+            await delay(3000)
+        }
+    }
 }

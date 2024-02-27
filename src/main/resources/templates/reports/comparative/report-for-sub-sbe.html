@@ -13,7 +13,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr class="table-row"  onclick="newReport(this)"
+    <tr class="table-row"  onclick="nextReport(this)"
         th:value="${item.sbeCode.startsWith('SM') ? item.sbeCode : ''}"
         th:each="item:${report_data}"
         th:classappend="${(item.sbeCode.startsWith('SM') ? 'pointer' : '')}">
