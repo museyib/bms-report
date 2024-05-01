@@ -80,4 +80,13 @@ public class ReportPageController
         model.addAttribute("months", monthService.months());
         return "reports/comparative/report";
     }
+
+    @RequestMapping("/frame/report")
+    public String frameReportPage(Model model)
+    {
+        model.addAttribute("isSuperVisor", false);
+        model.addAttribute("isAdmin", true);
+        model.addAttribute("months", monthService.months());
+        return "reports/comparative/report";
+    }
 }

@@ -5,7 +5,7 @@ let prevResult = $('#prev-result');
 let playPages = $('#play');
 
 let isPlaying = false;
-let firsLoad = true;
+let firstLoad = true;
 
 let sbeCode;
 let isSuperVisor;
@@ -36,7 +36,7 @@ function nextReport(element)
             sbeCode: sbeCode
         })
 
-        firsLoad = false;
+        firstLoad = false;
         getAjaxData();
     }
 }
@@ -151,7 +151,7 @@ function displaySuccess(data) {
     resultField.html(data);
     progress.attr('hidden', true)
 
-    if (firsLoad) {
+    if (firstLoad) {
         let dataTable = $('#data-table');
         isSuperVisor = dataTable.attr('isSuperVisor') === 'true';
         isAdmin = dataTable.attr('isAdmin') === 'true';
@@ -238,3 +238,6 @@ async function startPlay() {
         }
     }
 }
+
+if (document.URL.includes("frame"))
+    playPages.click();

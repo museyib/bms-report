@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,20 +29,22 @@ public class SpringSecurityConfig
     {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName(null);
-        http.requiresChannel(registry -> registry.anyRequest().requiresSecure())
-            .userDetailsService(userDetailsService)
-            .authorizeHttpRequests(matcherRegistry -> matcherRegistry
-                    .requestMatchers("/login",
-                                     "/logout",
-                                     "/403",
-                                     "/image/**").permitAll()
-                    .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                    .anyRequest().authenticated())
-            .formLogin(configurer -> configurer.loginPage("/login")
+        http.csrf(AbstractHttpConfigurer::disable);
+        http.requiresChannel(registry -> registry.anyRequest().requiresSecure());
+        http.userDetailsService(userDetailsService);
+        http.authorizeHttpRequests(matcherRegistry -> matcherRegistry
+                .requestMatchers("/login",
+                                "/logout",
+                                "/403",
+                                "/image/**").permitAll()
+                .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                .anyRequest().authenticated());
+        http.formLogin(configurer -> configurer.loginPage("/login")
                                                .permitAll()
-                                               .successHandler(successHandler))
-            .logout(LogoutConfigurer::permitAll)
-            .exceptionHandling(configurer -> configurer.accessDeniedHandler(accessDeniedHandler));
+                                               .successHandler(successHandler));
+        http.logout(LogoutConfigurer::permitAll);
+        http.headers(headersConfigurer -> headersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
+        http.exceptionHandling(configurer -> configurer.accessDeniedHandler(accessDeniedHandler));
 
         return http.build();
     }
