@@ -37,7 +37,8 @@ public class SpringSecurityConfig
                                 "/logout",
                                 "/403",
                                 "/image/**",
-                        "/reports/frame",
+                        "/css/**",
+                        "/js/**",
                         "/reports/frame/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated());
