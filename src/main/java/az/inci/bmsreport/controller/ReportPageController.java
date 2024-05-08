@@ -87,6 +87,6 @@ public class ReportPageController
         model.addAttribute("isSuperVisor", false);
         model.addAttribute("isAdmin", true);
         model.addAttribute("months", monthService.months());
-        return "reports/comparative/report";
+        return "reports/frame";
     }
 }

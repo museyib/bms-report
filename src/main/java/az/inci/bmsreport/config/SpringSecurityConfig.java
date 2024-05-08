@@ -36,7 +36,9 @@ public class SpringSecurityConfig
                 .requestMatchers("/login",
                                 "/logout",
                                 "/403",
-                                "/image/**").permitAll()
+                                "/image/**",
+                        "/reports/frame",
+                        "/reports/frame/**").permitAll()
                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated());
         http.formLogin(configurer -> configurer.loginPage("/login")

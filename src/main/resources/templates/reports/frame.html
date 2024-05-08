@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang='en' xmlns:th='http://www.thymeleaf.org'>
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script crossorigin="anonymous"
+            integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link crossorigin="anonymous" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/css/bootstrap-select.min.css"
+          rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta2/dist/js/bootstrap-select.min.js"></script>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js" type="text/javascript"></script>
+    <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/themes/base/jquery-ui.css" rel="stylesheet"
+          type="text/css"/>
+    <style>
+        table {
+            height: 1px;
+            width: 1px;
+            white-space: nowrap;
+        }
+
+        .positive-change
+        {
+            background-color: #18c518 !important;
+        }
+
+        .negative-change
+        {
+            background-color: #ff3e3e !important;
+        }
+
+        .data-cell-container
+        {
+            height: 100%;
+        }
+
+        .data-cell
+        {
+            border-radius: 15px;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: right;
+            position: relative;
+        }
+
+        .data-cell-background
+        {
+            border-radius: 15px;
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+
+        .data-text
+        {
+            font-weight: bold;
+            position: absolute;
+            margin-right: 10px;
+        }
+
+        .text-black
+        {
+            color: black;
+        }
+
+        .text-white
+        {
+            color: white;
+        }
+
+        .picture-head
+        {
+            width: 70px;
+        }
+
+        .picture
+        {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+        }
+
+        .data-col
+        {
+            width: 20%;
+        }
+
+        .table-row
+        {
+            vertical-align: middle;
+            font-size: large;
+        }
+
+        .table-row-self
+        {
+            color: blue; font-weight: bold
+        }
+
+        .pointer
+        {
+            cursor: pointer;
+        }
+
+        .result
+        {
+            padding-top: 50px;
+        }
+    </style>
+    <title>Müqayisəli artım faizi</title>
+</head>
+<body onload='getAjaxData()'>
+<div class='fixed-top bg-opacity-100 bg-white'>
+    <label for='month'>
+        <select class='select-picker form-control' id='month'
+                name='month' required title='Ay seçin'
+                onchange='monthChanged()'>
+            <option th:each='month:${months}'
+                    th:text='${month.name}'
+                    th:value='${month.id}'
+                    th:selected='${month.id == 0}'></option>
+        </select>
+    </label>
+    <span id='prev-result' onclick='reloadPrevResult()' class='icon-arrow-left m-3 pointer' hidden></span>
+    <span id='play' onclick='startPlay()' class='icon-play m-3 pointer' hidden></span>
+    <progress hidden id='report-progress' style='width: 100%'></progress>
+</div>
+<div id='result' class='result'></div>
+<script>
+    let resultField = $('#result');
+    let progress = $('#report-progress');
+    let month = $('#month');
+    let prevResult = $('#prev-result');
+    let playPages = $('#play');
+
+    let isPlaying = false;
+    let firstLoad = true;
+
+    let sbeCode;
+    let isSuperVisor;
+    let isAdmin;
+    let url = 'report-for-bm';
+    let data;
+    let monthId;
+
+    let reportPage;
+    let reportPageStack = [];
+
+    let jqXHR;
+
+    function nextReport(element)
+    {
+        let tmp = element.getAttribute('value');
+
+        if(tmp)
+        {
+            sbeCode = tmp;
+            isSuperVisor = element.getAttribute('isSuperVisor');
+            isAdmin = element.getAttribute('isAdmin');
+
+            reportPageStack.push({
+                content: resultField.html(),
+                url: url,
+                monthId: monthId,
+                sbeCode: sbeCode
+            })
+
+            firstLoad = false;
+            getAjaxData();
+        }
+    }
+
+    function sortBy(n)
+    {
+        let table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
+        table = document.getElementById('data-table');
+        switching = true;
+        dir = 'desc';
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName('td')[n].getElementsByTagName('div')[0].getElementsByTagName('span')[0];
+                y = rows[i + 1].getElementsByTagName('td')[n].getElementsByTagName('div')[0].getElementsByTagName('span')[0];
+                if (dir === 'asc') {
+                    if (parseFloat(x.innerHTML.toLowerCase()) > parseFloat(y.innerHTML.toLowerCase())) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir === 'desc') {
+                    if (parseFloat(x.innerHTML.toLowerCase()) < parseFloat(y.innerHTML.toLowerCase())) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchCount ++;
+            } else {
+                if (switchCount === 0 && dir === 'desc') {
+                    dir = 'asc';
+                    switching = true;
+                }
+            }
+        }
+    }
+
+    $('.select-picker').selectpicker({
+        sanitize: true,
+        actionsBox: true,
+        width: '300px',
+        liveSearchNormalize: true,
+        noneResultsText: 'Tapılmadı: {0}'
+    })
+
+    function monthChanged()
+    {
+        jqXHR.abort();
+        resetObjects();
+        reselectMonth();
+
+        if (sbeCode && sbeCode.startsWith('SM'))
+            data = 'sbe-code=' + sbeCode + '&month-id=' + monthId;
+        else
+            data = 'month-id=' + monthId;
+
+        ajaxRequest();
+    }
+
+    function resetObjects()
+    {
+        resultField.removeClass('alert alert-danger').html('');
+        progress.attr('hidden', false);
+        monthId = month.val();
+    }
+
+    function getAjaxData() {
+        resetObjects();
+
+        if (sbeCode && sbeCode.startsWith('SM')) {
+            prevResult.attr('hidden', false);
+            data = 'sbe-code=' + sbeCode;
+
+            if (isAdmin || sbeCode.startsWith('SM')) {
+                url = 'report-for-sub-bm-sbe';
+            } else if (isSuperVisor) {
+                url = 'report-for-sub-bm';
+            }
+        }
+
+        if (data)
+            data += '&month-id=' + monthId;
+        else
+            data = 'month-id=' + monthId;
+
+        ajaxRequest();
+    }
+
+    let ajaxRequest = function () {
+        jqXHR = $.ajax({
+            type: 'GET',
+            contentType: 'application/json',
+            url: url,
+            data: data,
+            responseJSON: {
+                error: null
+            }
+        }).done(function (data) {
+            displaySuccess(data);
+        }).fail(function (jqXHR) {
+            displayError(jqXHR);
+        });
+        data = '';
+    }
+
+    function displaySuccess(data) {
+        resultField.html(data);
+        progress.attr('hidden', true)
+
+        if (firstLoad) {
+            let dataTable = $('#data-table');
+            isSuperVisor = dataTable.attr('isSuperVisor') === 'true';
+            isAdmin = dataTable.attr('isAdmin') === 'true';
+            let hidePlayButton = !(isAdmin || isSuperVisor);
+            playPages.attr('hidden', hidePlayButton);
+        }
+    }
+
+    function displayError(jqXHR) {
+        let error = jqXHR.responseJSON ? jqXHR.responseJSON.error : jqXHR.statusText;
+        resultField.addClass('alert alert-danger').html(error);
+        progress.attr('hidden', true)
+    }
+
+    function reloadPrevResult()
+    {
+        if (jqXHR)
+            jqXHR.abort();
+        isPlaying = false;
+        playPages.addClass('icon-play');
+        playPages.removeClass('icon-stop');
+
+        reportPage = reportPageStack.pop();
+
+        resultField.removeClass('alert alert-danger').html(reportPage.content);
+        url = reportPage.url;
+        monthId = reportPage.monthId;
+        sbeCode = reportPage.sbeCode;
+
+        if (reportPageStack.length === 0)
+            prevResult.attr('hidden', true);
+
+        reselectMonth();
+    }
+
+    function reloadFirstResult()
+    {
+        reportPage = reportPageStack[0];
+        reportPageStack = [];
+
+        resultField.removeClass('alert alert-danger').html(reportPage.content);
+        url = reportPage.url;
+        monthId = reportPage.monthId;
+        sbeCode = reportPage.sbeCode;
+
+        prevResult.attr('hidden', true);
+    }
+
+    function reselectMonth()
+    {
+        month.find('option').attr('selected', false);
+        $('#month option[value='+monthId+']').attr('selected', true);
+        month.val(monthId);
+        month.selectpicker('refresh');
+    }
+
+
+    function delay(time) {
+        return new Promise(resolve => {setTimeout(resolve, time)});
+    }
+
+    async function startPlay() {
+        isPlaying = !isPlaying;
+        playPages.toggleClass('icon-play');
+        playPages.toggleClass('icon-stop');
+        if (isPlaying) {
+            while (isPlaying) {
+                let rowElements = $('#data-table').find('.table-row');
+                if (rowElements && rowElements.length > 0) {
+                    if (!rowElements[0].getAttribute('value').startsWith('SM'))
+                    {
+                        reloadFirstResult()
+                    }
+                    else
+                    {
+                        let randomIndex = Math.floor(Math.random() * rowElements.length);
+                        let nextElement = rowElements[randomIndex];
+                        nextElement.animate({backgroundColor: 'lightblue'}, 600)
+                        await delay(700)
+                        nextReport(nextElement);
+                    }
+                }
+                await delay(3000)
+            }
+        }
+    }
+
+    if (document.URL.includes("frame"))
+        playPages.click();
+</script>
+</body>
+</html>
