@@ -6,12 +6,17 @@ table {
 
 .positive-change
 {
-    background-color: #18c518 !important;
+    background-color: #21df21 !important;
 }
 
-.negative-change
+.low-negative-change
 {
-    background-color: #ff3e3e !important;
+    background-color: #f4f452 !important;
+}
+
+.high-negative-change
+{
+    background-color: #f68181 !important;
 }
 
 .data-cell-container

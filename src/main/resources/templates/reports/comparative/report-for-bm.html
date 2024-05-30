@@ -31,21 +31,15 @@
         <td class="data-cell-container">
             <div class="data-cell">
                 <div class="data-cell-background"
-                     th:classappend="${item.saleChangePercent > 0 ? 'positive-change' : (item.saleChangePercent < 0 ? 'negative-change' : '')}"
-                     th:styleappend="'opacity: ' + ${item.saleChangePercent > 0 ? item.positiveSaleRatio : item.negativeSaleRatio}"></div>
-                <span class="data-text"
-                      th:classappend="${item.saleChangePercent > 0 ? (item.positiveSaleRatio > 0.7 ? 'text-white' :  'text-black') : (item.negativeSaleRatio > 0.7 ? 'text-white' :  'text-black')}"
-                      th:utext="${#numbers.formatDecimal(item.saleChangePercent, 1, 1) + '%'}"></span>
+                     th:classappend="${item.saleChangePercent > 0 ? 'positive-change' : (item.saleChangePercent > -10 ? 'low-negative-change' : 'high-negative-change')}"></div>
+                <span class="data-text" th:utext="${#numbers.formatDecimal(item.saleChangePercent, 1, 1) + '%'}"></span>
             </div>
         </td>
         <td class="data-cell-container">
             <div class="data-cell">
                 <div class="data-cell-background"
-                     th:classappend="${item.paymentChangePercent > 0 ? 'positive-change' : (item.paymentChangePercent < 0 ? 'negative-change' : '')}"
-                     th:styleappend="'opacity: ' + ${item.paymentChangePercent > 0 ? item.positivePaymentRatio : item.negativePaymentRatio}"></div>
-                <span class="data-text"
-                      th:classappend="${item.paymentChangePercent > 0 ? (item.positivePaymentRatio > 0.7 ? 'text-white' :  'text-black') : (item.negativePaymentRatio > 0.7 ? 'text-white' :  'text-black')}"
-                      th:utext="${#numbers.formatDecimal(item.paymentChangePercent, 1, 1) + '%'}"></span>
+                     th:classappend="${item.paymentChangePercent > 0 ? 'positive-change' : (item.paymentChangePercent > -10 ? 'low-negative-change' : 'high-negative-change')}"></div>
+                <span class="data-text" th:utext="${#numbers.formatDecimal(item.paymentChangePercent, 1, 1) + '%'}"></span>
             </div>
         </td>
     </tr>
